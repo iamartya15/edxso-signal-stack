@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: edxso-signal-stack
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: if [ ! -f data/signalstack.db ]; then python seed.py; fi; python run.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
