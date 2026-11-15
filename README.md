@@ -19,6 +19,8 @@ data and says so.
 
 `demo-signal-stack.mp4` in this repo (5 min 17 s) is a captioned walkthrough of the live app: dashboard, labelled research, the adaptive 10-question interview, the Signal Stack, the scheduler, and a real Monday Morning Brief.
 
+**Live demo:** https://edxso-signal-stack.onrender.com — the app running live (free hosting, so the first load may take up to a minute while the service wakes).
+
 ## Quick start
 
 ```bash
