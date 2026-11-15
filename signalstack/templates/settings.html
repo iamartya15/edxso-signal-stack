@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Scheduler settings</h1>
+<form method="post" class="card">
+  <label><input type="checkbox" name="enabled" {% if settings.scheduler_enabled == '1' %}checked{% endif %}>
+    Enable automatic monitoring</label>
+  <label>Run every
+    <select name="interval">
+      {% for h in ['2', '12', '24'] %}
+      <option value="{{ h }}" {% if settings.scheduler_interval_hours == h %}selected{% endif %}>{{ h }} hours</option>
+      {% endfor %}
+    </select></label>
+  <label><input type="checkbox" name="ten_pm" {% if settings.scheduler_ten_pm == '1' %}checked{% endif %}>
+    Also run daily at 10:00 PM</label>
+  <p class="hint">Last automatic run: {{ settings.last_auto_run or 'none yet' }}.
+  Automatic runs respect each source's own crawl frequency; the "Run monitoring now"
+  button on a company's stack page always forces a full fetch. If a source fails,
+  the run is marked partial and the brief falls back to cached signals.</p>
+  <button type="submit">Save settings</button>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Adaptive interview - {{ c.name }}</h1>
+<p class="hint">These 10 questions were generated from {{ c.name }}'s own research -
+its sector, the offerings on its website, and what is still unknown. They are not a
+fixed form: another company gets different questions. Answers tagged
+<em>goals / competitors / customers / products</em> flow back into the profile and
+sharpen the ranking of every future signal.</p>
+<form method="post" class="card">
+{% for q in questions %}
+  <div class="q">
+    <label><strong>{{ loop.index }}.</strong> {{ q.question }}
+      {% if q.field %}<span class="chip field">updates profile: {{ q.field }}</span>{% endif %}
+      {% if q.known %}<span class="chip known">partly known - confirm or correct</span>{% endif %}
+    </label>
+    <textarea name="q{{ loop.index }}" rows="2">{{ saved.get(loop.index, '') }}</textarea>
+  </div>
+{% endfor %}
+<button type="submit">Save interview</button>
+</form>
+{% endblock %}

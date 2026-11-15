@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Companies</h1>
+{% if companies %}
+<table>
+<tr><th>Company</th><th>Category</th><th>Sector</th><th>Sources</th><th>Signals stored</th><th>Last run</th><th></th></tr>
+{% for c in companies %}
+<tr>
+  <td><a href="{{ url_for('web.company', cid=c.id) }}">{{ c.name }}</a><br>
+      <small>{{ c.website }}</small></td>
+  <td>{{ c.category or '-' }}</td><td>{{ c.sector or '-' }}</td>
+  <td>{{ c.n_sources }}</td><td>{{ c.n_signals }}</td><td>{{ c.last_run or 'never' }}</td>
+  <td><a class="btn" href="{{ url_for('web.brief', cid=c.id) }}">Monday Morning Brief</a></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}<p>No companies yet. Add the first one below - research runs automatically.</p>{% endif %}
+
+<h2>Add a company</h2>
+<form method="post" action="{{ url_for('web.create_company') }}" class="card">
+  <label>Company name <input name="name" required></label>
+  <label>Website <input name="website" placeholder="https://example.com" required></label>
+  <label>Category <input name="category" placeholder="B2C / B2B / Education"></label>
+  <button type="submit">Research &amp; create profile</button>
+  <p class="hint">Signal Stack fetches the public website, labels every finding
+  VERIFIED FACT (with source) or ASSUMPTION, then builds a starter Signal Stack.</p>
+</form>
+
+<h2>Automation</h2>
+<p class="card">Scheduler: <strong>{{ 'ON' if settings.scheduler_enabled == '1' else 'OFF' }}</strong>,
+interval every <strong>{{ settings.scheduler_interval_hours }}h</strong>,
+10 PM daily run: <strong>{{ 'ON' if settings.scheduler_ten_pm == '1' else 'OFF' }}</strong>.
+Last automatic run: {{ settings.last_auto_run or 'none yet' }}.
+<a href="{{ url_for('web.settings_view') }}">Change settings</a></p>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Signal Stack - {{ c.name }}</h1>
+<p>
+  <form method="post" action="{{ url_for('web.monitor_run', cid=c.id) }}" style="display:inline">
+    <button type="submit">Run monitoring now</button></form>
+  <form method="post" action="{{ url_for('web.stack_build', cid=c.id) }}" style="display:inline">
+    <button type="submit">Rebuild / refresh stack</button></form>
+  <a class="btn" href="{{ url_for('web.brief', cid=c.id) }}">Open the brief</a>
+</p>
+<p class="hint">Each source states why it is in the stack, its category and how often
+it is crawled. A failed source never blocks the others: the brief then shows its
+previously stored (cached) signals and the failure is shown here honestly.</p>
+
+{% for cat in ['Customers', 'Competitors', 'Market', 'Internal'] %}
+<h2>{{ cat }}</h2>
+<table>
+<tr><th>Source</th><th>Why it is included</th><th>Type</th><th>Crawl</th><th>Last fetch</th><th></th></tr>
+{% for s in sources if s.category == cat %}
+<tr>
+  <td><a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.name }}</a></td>
+  <td>{{ s.reason }}</td><td>{{ s.source_type }}</td><td>every {{ s.frequency_hours }}h</td>
+  <td>{{ s.last_status }}{% if s.last_fetched_at %}<br><small>{{ s.last_fetched_at }}</small>{% endif %}</td>
+  <td><form method="post" action="{{ url_for('web.stack_remove', cid=c.id, sid=s.id) }}">
+      <button type="submit" class="danger">Remove</button></form></td>
+</tr>
+{% else %}<tr><td colspan="6">No sources in this category yet.</td></tr>{% endfor %}
+</table>
+{% endfor %}
+
+<h2>Add a source manually</h2>
+<form method="post" class="card grid">
+  <label>Name <input name="name" required></label>
+  <label>URL (RSS feed or webpage) <input name="url" required></label>
+  <label>Category <select name="category">
+    <option>Customers</option><option>Competitors</option>
+    <option>Market</option><option>Internal</option></select></label>
+  <label>Type <select name="source_type"><option value="rss">rss</option>
+    <option value="webpage">webpage</option></select></label>
+  <label>Authority (0-100) <input name="authority" type="number" value="60" min="0" max="100"></label>
+  <label>Crawl every (hours) <input name="frequency_hours" type="number" value="24" min="1"></label>
+  <label class="wide">Reason for inclusion <input name="reason"></label>
+  <button type="submit">Add source</button>
+</form>
+
+<h2>Monitoring history</h2>
+<table>
+<tr><th>Started</th><th>Status</th><th>Sources ok</th><th>Failed</th><th>New signals</th><th>Note</th></tr>
+{% for r in runs %}
+<tr><td>{{ r.started_at }}</td><td>{{ r.status }}</td><td>{{ r.sources_ok }}</td>
+<td>{{ r.sources_failed }}</td><td>{{ r.new_signals }}</td><td>{{ r.note }}</td></tr>
+{% else %}<tr><td colspan="6">No runs yet.</td></tr>{% endfor %}
+</table>
+{% endblock %}

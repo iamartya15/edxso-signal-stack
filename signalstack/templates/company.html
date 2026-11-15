@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>{{ c.name }}</h1>
+<p class="steps">
+  <a class="btn" href="{{ url_for('web.interview_view', cid=c.id) }}">Adaptive interview (10 questions{% if answered %}, {{ answered }} answered{% endif %})</a>
+  <a class="btn" href="{{ url_for('web.stack_view', cid=c.id) }}">Signal Stack &amp; monitoring</a>
+  <a class="btn" href="{{ url_for('web.brief', cid=c.id) }}">Monday Morning Brief</a>
+  <a class="btn" href="{{ url_for('web.export', cid=c.id, fmt='csv') }}">Export CSV</a>
+  <a class="btn" href="{{ url_for('web.export', cid=c.id, fmt='xlsx') }}">Export Excel</a>
+</p>
+
+<h2>Research findings</h2>
+<p class="hint">Every item is labelled. VERIFIED FACT = taken from the named public
+source shown. ASSUMPTION = Signal Stack's own inference, to be validated in the interview.</p>
+{% for it in items %}
+<div class="item">
+  <span class="chip {{ 'verified' if it.label == 'VERIFIED FACT' else 'assumption' }}">{{ it.label }}</span>
+  <span>{{ it.text }}</span>
+  <small class="src">Source: {{ it.source }}</small>
+</div>
+{% else %}<p>No research yet.</p>{% endfor %}
+<form method="post" action="{{ url_for('web.rerun_research', cid=c.id) }}">
+  <button type="submit">Re-run research from live website</button>
+</form>
+
+<h2>Company profile (editable)</h2>
+<form method="post" action="{{ url_for('web.update_profile', cid=c.id) }}" class="card grid">
+  <label>Name <input name="name" value="{{ c.name }}"></label>
+  <label>Website <input name="website" value="{{ c.website }}"></label>
+  <label>Category <input name="category" value="{{ c.category }}"></label>
+  <label>Sector <input name="sector" value="{{ c.sector }}"></label>
+  <label>Location <input name="location" value="{{ c.location }}"></label>
+  <label class="wide">Description <textarea name="description" rows="2">{{ c.description }}</textarea></label>
+  <label class="wide">Products / services <textarea name="products" rows="2">{{ c.products }}</textarea></label>
+  <label class="wide">Business goals (drive relevance ranking) <textarea name="goals" rows="2">{{ c.goals }}</textarea></label>
+  <label class="wide">Target customers <textarea name="customers" rows="2">{{ c.customers }}</textarea></label>
+  <label class="wide">Competitors (comma separated) <textarea name="competitors" rows="2">{{ c.competitors }}</textarea></label>
+  <button type="submit">Save profile</button>
+</form>
+{% endblock %}

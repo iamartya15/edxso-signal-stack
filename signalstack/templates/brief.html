@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Monday Morning Brief - {{ c.name }}</h1>
+{% if last_run %}
+<p class="hint">Built from the latest monitoring run ({{ last_run.started_at }},
+status: <strong>{{ last_run.status }}</strong>, {{ last_run.new_signals }} new signals,
+{{ total }} signals in history).</p>
+{% if stale %}<div class="flash error">Some sources failed in the latest run
+({{ last_run.note }}) Items below include cached signals from earlier successful
+fetches - nothing shown here was invented to fill the gap.</div>{% endif %}
+{% else %}<p class="hint">No monitoring run yet - open the Signal Stack and run monitoring first.</p>{% endif %}
+
+{% for s in signals %}
+<article class="signal {{ s.priority|lower }}">
+  <div class="sig-head">
+    <span class="chip type">{{ s.category }}</span>
+    <span class="pub">{{ s.publication }}</span>
+    <span class="score">Score {{ s.score }}/100</span>
+    <span>Priority <span class="chip priority-{{ s.priority|lower }}">{{ s.priority }}</span></span>
+    {% if s.source_status and s.source_status.startswith('failed') %}
+      <span class="chip cached">cached (source currently failing)</span>{% endif %}
+  </div>
+  <h3>{% if s.link %}<a href="{{ s.link }}" target="_blank" rel="noopener">{{ s.title }}</a>{% else %}{{ s.title }}{% endif %}</h3>
+  <p>{{ s.description | striptags }}</p>
+  <dl>
+    <dt>Relevance</dt><dd>{{ s.relevance }}/100 - {{ s.priority_reason }}</dd>
+    <dt>Evidence</dt><dd>{{ s.evidence }}</dd>
+    <dt>Impact</dt><dd>{{ s.impact_text }}</dd>
+    <dt>Published</dt><dd>{{ s.published_at or 'date not provided by source' }} - fetched {{ s.fetched_at }}</dd>
+  </dl>
+</article>
+{% else %}
+<p>No signals stored yet for {{ c.name }}.</p>
+{% endfor %}
+{% endblock %}
