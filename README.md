@@ -15,6 +15,10 @@ No mock data is presented as real: research items are labelled
 fetched, and when a source fails the brief honestly falls back to cached
 data and says so.
 
+## Demo video
+
+`demo-signal-stack.mp4` in this repo (5 min 17 s) is a captioned walkthrough of the live app: dashboard, labelled research, the adaptive 10-question interview, the Signal Stack, the scheduler, and a real Monday Morning Brief.
+
 ## Quick start
 
 ```bash
